@@ -8,8 +8,20 @@ typedef struct {
     int value;
 } KeyValuePair;
 
-int read_file(const char *filename) {
+void addUInt32ToByteContainerBigEndian(unsigned char **byteContainer, size_t *currentSize, size_t *capacity, uint32_t value) {
+    for (int i = 3; i >= 0; i--) {
+        unsigned char byte = (value >> (i * 8)) & 0xFF;
+        addByte(byteContainer, currentSize, capacity, byte);
+    }
+}
 
+ void addStringToByteContainer(unsigned char **byteContainer, size_t *currentSize, size_t *capacity, const char *str) {
+    for(size_t i = 0; i < strlen(str); i++) {
+        addByte(byteContainer, currentSize, capacity, str[i]);
+    }
+}
+
+int read_file(const char *filename) {
     FILE *file = fopen(filename, "r");
     if (file == NULL) {
         perror("Error opening file");
@@ -53,7 +65,7 @@ int write_to_file(const char *filename, const unsigned char *bytes, size_t size)
     }
 
     if (fclose(file) != 0) {
-        perror("Erro closing file");
+        perror("Error closing file");
         return-1;
     }
 
@@ -69,7 +81,7 @@ int main(int argc, char *argv[]) {
     */
 
     // byte container creation 
-    size_t capacity = 10;
+    size_t capacity = 20;
     size_t currentSize = 0;
     unsigned char* byteContainer = malloc(capacity * sizeof(unsigned char));
     if (byteContainer == NULL) {
@@ -77,16 +89,20 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    addByte(&byteContainer, &currentSize, &capacity, 69);
-    addByte(&byteContainer, &currentSize, &capacity, 69);
-    addByte(&byteContainer, &currentSize, &capacity, 69);
+    const char* str1 = "FOR1";
+    addStringToByteContainer(&byteContainer, &currentSize, &capacity, str1);
+
+    uint32_t num = 4;
+    addUInt32ToByteContainerBigEndian(&byteContainer, &currentSize, &capacity, num);
+
+    const char* str2 = "BEAM";
+    addStringToByteContainer(&byteContainer, &currentSize, &capacity, str2);
 
     for (size_t i = 0; i < currentSize; i++) {
-        printf("byteConatiner[%zu] = %d\n", i, byteContainer[i]);
+        printf("byteContainer[%zu] = %d\n", i, byteContainer[i]);
     }
 
     const char* filepath = "main.beam";
-
     if (write_to_file(filepath, byteContainer, currentSize) != 0) {
         free(byteContainer);
         return -1;
