@@ -8,6 +8,11 @@ typedef struct {
     int value;
 } KeyValuePair;
 
+unsigned char* code_chunk(size_t* size) {
+    *size = 0;
+    return 0;
+}
+
 void addUInt32ToByteContainerBigEndian(unsigned char **byteContainer, size_t *currentSize, size_t *capacity, uint32_t value) {
     for (int i = 3; i >= 0; i--) {
         unsigned char byte = (value >> (i * 8)) & 0xFF;
@@ -89,26 +94,26 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    const char* str1 = "FOR1";
-    addStringToByteContainer(&byteContainer, &currentSize, &capacity, str1);
+    addStringToByteContainer(&byteContainer, &currentSize, &capacity, "FOR1");
 
-    uint32_t num = 4;
-    addUInt32ToByteContainerBigEndian(&byteContainer, &currentSize, &capacity, num);
+    // calculate code chunk size
+    size_t codeSize;
+    unsigned char* code = code_chunk(&codeSize);
 
-    const char* str2 = "BEAM";
-    addStringToByteContainer(&byteContainer, &currentSize, &capacity, str2);
+    uint32_t totalSize = 4 + codeSize;
+    addUInt32ToByteContainerBigEndian(&byteContainer, &currentSize, &capacity, totalSize);
 
-    for (size_t i = 0; i < currentSize; i++) {
-        printf("byteContainer[%zu] = %d\n", i, byteContainer[i]);
+    addStringToByteContainer(&byteContainer, &currentSize, &capacity, "BEAM");
+
+    for (size_t i = 0; i <codeSize; i++) {
+        addByte(&byteContainer, &currentSize, &capacity, code[i]);
     }
 
-    const char* filepath = "main.beam";
-    if (write_to_file(filepath, byteContainer, currentSize) != 0) {
+    if (write_to_file("main.beam", byteContainer, currentSize) != 0) {
         free(byteContainer);
         return -1;
     }
 
     free(byteContainer);
-    addStringToByteContainer(&byteContainer, &currentSize, &capacity, str1);
     return 0;
 }
