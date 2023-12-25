@@ -17,7 +17,7 @@ https://blog.stenmans.org/theBeamBook/#SEC-BeamModulesCTE
 - This will load the Erlang with the code path
 - Cannot load because it needs a good file header
 
-### Errors that make occur when loading the BEAM file
+### Errors that may occur when loading the BEAM file
 ```c 
 read_result = beamfile_read(code,
                                 unloaded_size,
@@ -58,4 +58,5 @@ read_result = beamfile_read(code,
         break;
     }
 ```
-
+[x] corrupt file header
+[ ] corrupt code chunk

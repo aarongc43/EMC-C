@@ -109,6 +109,6 @@ int main(int argc, char *argv[]) {
     }
 
     free(byteContainer);
-
+    addStringToByteContainer(&byteContainer, &currentSize, &capacity, str1);
     return 0;
 }
