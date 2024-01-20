@@ -47,7 +47,7 @@ parse_chunks([{"Code", Size, <<SubSize:32/big,
                                OpcodeMax:32/big,
                                LabelCount:32/big,
                                FunctionCount:32/big,
-                               %% Info:SubSize/binary,
+                               Info:SubSize/binary,
                                Code/binary>>
               } | Rest], Acc) ->
     OpcodeSize = Size - (SubSize + 8),

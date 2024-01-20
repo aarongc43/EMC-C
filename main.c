@@ -38,7 +38,7 @@ int read_file(const char *filename) {
         return 1;
     }
 
-    char line[1014];
+    char line[1024];
     char key[100];
     int value;
 
