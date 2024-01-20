@@ -3,6 +3,23 @@
 #include <string.h>
 #include "byteContainer.h"
 
+// CodeChunk = <<
+//   ChunkName:4/unit:8 = "Code",
+//   ChunkSize:32/big,
+//   SubSize:32/big,
+//   InstructionSet:32/big,        % Must match code version in the emulator
+//   OpcodeMax:32/big,
+//   LabelCount:32/big,
+//   FunctionCount:32/big,
+//   Code:(ChunkSize-SubSize)/binary,  % all remaining data
+//   Padding4:0..3/unit:8
+// >>
+
+// SubSize is the size of the section of code with InstructionSet, OpcodeMax,
+// LabelCount and FunctionCount. This is used for backwards compatibility to
+// skip this section if there are more modules in newer versions of Erlang beam
+// files
+
 typedef struct {
     char key[100];
     int value;
